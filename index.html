@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Неко-Казино 🐾</title>
+<style>
+:root{--bg:#fff0f6;--card:#ffffff;--text:#3b1030;--muted:#8a5a7c;--accent:#e83e8c;--gold:#d99a00;--reel:#fff7fb;--line:#f3c4dc;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a0b22;--card:#2a1236;--text:#fbe7f5;--muted:#c79bbb;--accent:#ff5fa8;--gold:#ffc83d;--reel:#1a0b22;--line:#5a2a6e}}
+:root[data-theme="dark"]{--bg:#1a0b22;--card:#2a1236;--text:#fbe7f5;--muted:#c79bbb;--accent:#ff5fa8;--gold:#ffc83d;--reel:#1a0b22;--line:#5a2a6e}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;justify-content:center;padding:14px}
+.wrap{width:100%;max-width:440px}
+h1{margin:0 0 4px;text-align:center;font-size:26px;color:var(--accent)}
+.sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:12px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px}
+.dealer{display:flex;align-items:center;gap:10px}
+.dealer svg{width:118px;flex:none}
+.bubble{background:var(--reel);border:2px solid var(--line);border-radius:14px;padding:10px 12px;font-size:15px;line-height:1.35;min-height:64px;flex:1}
+.win svg{animation:hop .5s 3}
+@keyframes hop{50%{transform:translateY(-10px)}}
+.bal{display:flex;justify-content:space-between;font-weight:700;margin-bottom:10px}
+.bal span b{color:var(--gold)}
+.reels{display:flex;gap:8px}
+.reel{flex:1;aspect-ratio:1;background:var(--reel);border:3px solid var(--gold);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:54px}
+.spinning{filter:blur(1px)}
+.bets{display:flex;gap:6px;margin:12px 0}
+.bets button{flex:1;padding:9px 0;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--text);font-weight:700;font-size:15px}
+.bets button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+#spin,#loan,#loan2{width:100%;padding:15px;border:0;border-radius:14px;background:var(--accent);color:#fff;font-size:19px;font-weight:800}
+#spin:disabled{opacity:.6}
+#loan,#loan2{display:none;margin-top:8px;background:var(--gold);color:#2a1236}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:4px 2px;border-bottom:1px dashed var(--line)}
+td:last-child{text-align:right;font-weight:700;color:var(--gold)}
+.fine{text-align:center;color:var(--muted);font-size:12px}
+[hidden]{display:none!important}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tabs button{flex:1;padding:10px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--text);font-weight:800;font-size:15px}
+.tabs button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.set{display:grid;gap:8px}
+.set label{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+select{padding:7px;border-radius:8px;border:2px solid var(--line);background:var(--reel);color:var(--text);font-size:15px}
+.set button,.acts button{padding:12px;border:0;border-radius:12px;background:var(--accent);color:#fff;font-weight:800;font-size:16px}
+.acts{display:flex;gap:8px;margin-top:8px}.acts button{flex:1}
+.opp{display:flex;gap:6px;margin-bottom:8px}
+.op{flex:1;background:var(--reel);border:2px solid var(--line);border-radius:10px;padding:6px 2px;font-size:13px;text-align:center}
+.op.act{border-color:var(--accent)}
+.tbl{min-height:92px;display:flex;flex-wrap:wrap;gap:8px;padding:8px;background:var(--reel);border-radius:12px;border:2px dashed var(--line)}
+.pr{position:relative;width:58px;height:76px}
+.cd{width:46px;height:64px;border-radius:7px;background:#fff;color:#3b1030;border:2px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:15px;line-height:1.1;padding:0;font-family:inherit}
+.pr .cd:nth-child(2){position:absolute;left:12px;top:10px}
+.pr.sel .cd:first-child{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.cd.tr{background:#fff3c4;border-color:var(--gold)}
+.hand{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;justify-content:center}
+button.cd{cursor:pointer}
+.dmsg{margin-top:8px;min-height:20px;text-align:center;font-size:14px;color:var(--muted)}
+.tabs{flex-wrap:wrap}.tabs button{padding:10px 2px;font-size:13px;flex:1 0 28%}#tb-adm{flex:.3 0 12%}
+select,input{width:110px;padding:7px;border-radius:8px;border:2px solid var(--line);background:var(--reel);color:var(--text);font-size:15px}
+.cbet{margin:0 0 10px}.cbet input{width:100%}
+.opp{margin-top:16px}.op{position:relative;padding:4px 2px}
+.bb{position:absolute;top:-14px;left:50%;transform:translateX(-50%);z-index:2;background:#fff;color:#3b1030;border:1px solid var(--line);border-radius:10px;padding:1px 7px;font-size:12px;font-weight:800;white-space:nowrap}
+.cat{width:62px;height:62px;display:block;margin:0 auto;animation:br 3.2s ease-in-out infinite}
+@keyframes br{50%{transform:scale(1.045)}}
+.cat .lid{transform-box:fill-box;transform-origin:top;transform:scaleY(0);animation:bl 4.6s infinite}
+@keyframes bl{0%,93%,100%{transform:scaleY(0)}96%{transform:scaleY(1)}}
+.cat .ear{transform-box:fill-box;transform-origin:bottom;animation:tw 7s infinite}
+.cat .ear.r{animation-delay:-3s}
+@keyframes tw{0%,88%,100%{transform:rotate(0)}91%{transform:rotate(-14deg)}95%{transform:rotate(5deg)}}
+.cat .pu{transform-box:fill-box;transform-origin:center;transition:transform .3s}
+.cat.m-act .pu{transform:scale(2.6,.9)}.cat.m-think .pu{transform:scale(.7,1)}
+.cat.m-mad .ear.l{animation:none;transform:rotate(-38deg)}.cat.m-mad .ear.r{animation:none;transform:rotate(38deg)}
+.cat.m-sleep .lid,.cat.m-sad .lid{animation:none;transform:scaleY(1)}
+.cat.m-happy .lid{animation:none;transform:scaleY(.55)}
+.pr.nw{animation:pl .35s}@keyframes pl{from{transform:translateY(-34px) rotate(-12deg);opacity:0}}
+.wheel{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px}.wheel span{font-size:44px}
+.rnum{width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;color:#fff;background:#555;border:4px solid var(--gold)}
+.rnum.r{background:#d62839}.rnum.b{background:#1c1c24}.rnum.g{background:#1f9d55}
+.spin2{display:inline-block;animation:sp .8s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-left:3px}
+.it{width:46px;height:46px;border-radius:10px;border:2px solid var(--gold);background:var(--reel);font-size:22px;padding:0}
+#sgmsg{white-space:pre-line;min-height:54px}#sgopp{text-align:center;margin-bottom:6px}#sgopp .cat{width:72px;height:72px}
+.acts button:disabled{opacity:.45}
+body{background:radial-gradient(circle at 50% -10%,var(--card),var(--bg) 60%) fixed}
+.card{position:relative;overflow:hidden;box-shadow:0 4px 14px rgba(120,40,100,.12)}
+.dealer{position:sticky;top:calc(env(safe-area-inset-top,0px) + 6px);z-index:20;padding:8px 10px}
+.dealer svg{width:78px}.bubble{min-height:50px;font-size:14px;padding:8px 10px}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.tabs button{padding:7px 0;font-size:11px;line-height:1.3;flex:none}
+.tabs button#tb-adm{flex:none}
+.wl{position:relative;width:150px;height:150px;margin:6px auto 12px}
+#wh{position:absolute;inset:0;border-radius:50%;border:5px solid var(--gold);background:repeating-conic-gradient(#d62839 0 9.73deg,#1c1c24 9.73deg 19.46deg);transition:transform 2.2s cubic-bezier(.12,.7,.2,1)}
+#wb{position:absolute;inset:0;transition:transform 2.2s cubic-bezier(.2,.7,.3,1)}
+#wb::after{content:"";position:absolute;top:9px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:#fff;box-shadow:0 0 8px #fff}
+.wl .rnum{position:absolute;left:50%;top:50%;width:66px;height:66px;margin:-33px 0 0 -33px;font-size:26px}
+.rcat{margin-top:16px;text-align:center;font-size:12px}.rcat .cat{width:64px;height:64px}
+.sgrow{display:flex;gap:6px;margin:16px 0 6px}.sgo{font-size:12px;flex:1}.sgo .cat{width:54px;height:54px}.sgo.dead{opacity:.45}
+.op.jump{animation:jmp .5s}@keyframes jmp{40%{transform:translateY(-14px) scale(1.08)}}
+.flash{position:absolute;inset:0;pointer-events:none;opacity:0}
+.flash.f1{background:#ff3b3b;animation:fl .45s}.flash.f0{background:#fff;animation:fl .35s}
+@keyframes fl{0%{opacity:.6}100%{opacity:0}}
+.shake{animation:sk .4s}@keyframes sk{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.fly{position:absolute;left:50%;top:38%;font-size:46px;margin-left:-23px;pointer-events:none;animation:fy 1s forwards}
+@keyframes fy{to{transform:translateY(-70px) scale(1.6);opacity:0}}
+.it:active{transform:scale(.9)}.it{transition:transform .15s}
+.tabs{grid-template-columns:repeat(4,1fr)}
+.cd.bk{background:linear-gradient(135deg,#e83e8c,#7a2f6b);color:#fff;font-size:22px}
+.cd.em{background:transparent;border:2px dashed var(--line)}
+.dl{animation:deal .35s}@keyframes deal{from{transform:translateY(-24px) rotate(-8deg);opacity:0}}
+.hand b{align-self:center;margin-left:6px;font-size:14px}
+details.rules{background:var(--reel);border:2px solid var(--line);border-radius:12px;padding:8px 10px;font-size:13px;line-height:1.45}
+details.rules summary{font-weight:800;cursor:pointer;margin-bottom:4px}
+.skins{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.sk{border:2px solid var(--line);border-radius:14px;padding:8px;background:var(--reel);text-align:center;font-size:14px}
+.sk.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.pv{height:58px;border-radius:10px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;border:2px solid rgba(0,0,0,.12)}
+.sk button{width:100%;margin-top:6px;padding:9px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-weight:800;font-size:14px}
+.sk button.own{background:var(--gold);color:#2a1236}
+textarea{width:100%;border:2px solid var(--line);border-radius:8px;background:var(--reel);color:var(--text);padding:6px;font-size:12px;font-family:inherit}
+.set button#asv,.set button#asvl{background:var(--gold);color:#2a1236}.set button#asvd{background:#c0392b}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🐾 Неко-Казино 🐾</h1>
+<div class="sub">Деньги ненастоящие, мурчание настоящее</div>
+
+<div class="card dealer" id="dealer">
+<svg viewBox="0 0 140 180" aria-hidden="true">
+<defs><linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9c784"/><stop offset="1" stop-color="#ee9f58"/></linearGradient></defs>
+<path d="M100 150C138 150 142 100 116 92" fill="none" stroke="#ee9f58" stroke-width="10" stroke-linecap="round"/>
+<path d="M100 150C138 150 142 100 116 92" fill="none" stroke="#b9682f" stroke-width="10" stroke-dasharray="4 10" stroke-linecap="round"/>
+<path d="M44 110Q32 130 38 150" fill="none" stroke="url(#fg)" stroke-width="9" stroke-linecap="round"/>
+<path d="M44 106Q70 98 96 106Q108 124 92 142Q98 152 100 176H40Q42 152 48 142Q32 124 44 106Z" fill="#2b1a3d"/>
+<path d="M58 104L70 120L82 104Z" fill="#fff"/>
+<path d="M50 120Q58 136 69 124M91 120Q82 136 71 124" fill="none" stroke="#6b4a86" stroke-width="2" stroke-linecap="round"/>
+<g fill="#ffc83d"><circle cx="70" cy="134" r="1.8"/><circle cx="70" cy="144" r="1.8"/><circle cx="70" cy="154" r="1.8"/></g>
+<path d="M40 152H100L110 178H30Z" fill="#4a2a6b" stroke="#ffc83d" stroke-width="2"/>
+<rect x="63" y="88" width="14" height="16" fill="url(#fg)"/>
+<path d="M70 106L60 100V112ZM70 106L80 100V112Z" fill="#e0527f"/><circle cx="70" cy="106" r="2.4" fill="#ffc83d"/>
+<path d="M32 60Q28 96 42 106L52 80ZM108 60Q112 96 98 106L88 80Z" fill="#7a2f6b"/>
+<ellipse cx="70" cy="60" rx="38" ry="35" fill="#7a2f6b"/>
+<path d="M36 52L38 10L66 34Z" fill="url(#fg)"/><path d="M104 52L102 10L74 34Z" fill="url(#fg)"/>
+<path d="M42 40L43 22L57 33ZM98 40L97 22L83 33Z" fill="#ffb3cf"/>
+<ellipse cx="70" cy="64" rx="31" ry="29" fill="url(#fg)"/>
+<path d="M40 70L33 77L42 78ZM100 70L107 77L98 78Z" fill="#ee9f58"/>
+<ellipse cx="70" cy="76" rx="13" ry="9" fill="#fff3de"/>
+<ellipse cx="56" cy="64" rx="7" ry="9" fill="#fff"/><ellipse cx="84" cy="64" rx="7" ry="9" fill="#fff"/>
+<circle cx="56" cy="65" r="5.4" fill="#f2b01e"/><circle cx="84" cy="65" r="5.4" fill="#f2b01e"/>
+<ellipse cx="56" cy="65" rx="1.8" ry="5" fill="#2b1a3d"/><ellipse cx="84" cy="65" rx="1.8" ry="5" fill="#2b1a3d"/>
+<circle cx="58" cy="62" r="1.7" fill="#fff"/><circle cx="86" cy="62" r="1.7" fill="#fff"/>
+<path d="M48 57Q52 53 58 54M92 57Q88 53 82 54" fill="none" stroke="#2b1a3d" stroke-width="1.8" stroke-linecap="round"/>
+<ellipse cx="46" cy="75" rx="5" ry="3" fill="#ff8fb5" opacity=".55"/><ellipse cx="94" cy="75" rx="5" ry="3" fill="#ff8fb5" opacity=".55"/>
+<path d="M67 72h6l-3 4Z" fill="#e0527f"/>
+<path d="M70 76q-5 6-9 2M70 76q5 6 9 2" fill="none" stroke="#2b1a3d" stroke-width="1.5" stroke-linecap="round"/>
+<path d="M50 76l-16-3M50 80l-16 4M90 76l16-3M90 80l16 4" stroke="#2b1a3d" stroke-width="1" stroke-linecap="round"/>
+<path d="M39 58Q50 22 70 38Q90 22 101 58Q88 42 70 50Q52 42 39 58Z" fill="#7a2f6b"/>
+<path d="M96 108Q112 112 112 130" fill="none" stroke="url(#fg)" stroke-width="9" stroke-linecap="round"/>
+<g transform="translate(112 128)" stroke="#c9a2b8" stroke-width="1" fill="#fff"><rect x="-8" y="-26" width="16" height="22" rx="2" transform="rotate(-20)"/><rect x="-8" y="-26" width="16" height="22" rx="2"/><rect x="-8" y="-26" width="16" height="22" rx="2" transform="rotate(20)"/></g>
+<circle cx="112" cy="130" r="5.5" fill="#f6b86e"/>
+</svg>
+<div class="bubble" id="say">Мяу~ Добро пожаловать! Я Мика, твой дилер. Крути барабаны, не стесняйся 🐟</div>
+</div>
+
+<div class="tabs"><button id="tb-slots" class="on">🎰<br>Слоты</button><button id="tb-dur">🃏<br>Дурак</button><button id="tb-rou">🎡<br>Рулетка</button><button id="tb-sg">🔫<br>Дробовик</button><button id="tb-bj">🂡<br>Блэкджек</button><button id="tb-pk">♠️<br>Покер</button><button id="tb-shop">🛍️<br>Магазин</button><button id="tb-adm">🔒<br>Админ</button></div>
+<div id="tslots">
+<div class="card">
+<div class="bal"><span>Баланс: <b id="bal">1500</b> 🪙</span><span>Выигрыш: <b id="last">0</b></span></div>
+<div class="reels"><div class="reel" id="r0">🐱</div><div class="reel" id="r1">🐱</div><div class="reel" id="r2">🐱</div></div>
+<div class="bets" id="bets"></div>
+<div class="cbet"><input type="number" id="cb" min="1" placeholder="Своя ставка 🪙"></div>
+<button id="spin">КРУТИТЬ</button>
+<button id="loan">Попросить добавку 500 🪙</button>
+</div>
+
+<div class="card">
+<table>
+<tr><td>🐱🐱🐱 Неко-джекпот</td><td>×50</td></tr>
+<tr><td>💎💎💎</td><td>×25</td></tr>
+<tr><td>🎀🎀🎀</td><td>×15</td></tr>
+<tr><td>🐟🐟🐟</td><td>×10</td></tr>
+<tr><td>🥛🥛🥛</td><td>×6</td></tr>
+<tr><td>Любая пара</td><td>×0.5</td></tr>
+</table>
+</div>
+</div>
+<div id="tdur" hidden>
+<div class="card">
+<div class="bal"><span>Баланс: <b id="bal2">1500</b> 🪙</span><span id="trinfo">36 карт</span></div>
+<div id="dset" class="set">
+<label>Игроки<select id="dn"><option>2</option><option>3</option><option>4</option></select></label>
+<label>Сложность<select id="dd"><option value="0">Лёгкая</option><option value="1" selected>Средняя</option><option value="2">Сложная</option></select></label>
+<label>Ставка 🪙<input type="number" id="ds" min="1" value="50"></label>
+<label>Колода<select id="dk"><option value="4">36 карт (с 🍖)</option><option value="3">27 карт (без 🍖)</option></select></label>
+<button id="dgo">Раздать карты</button>
+</div>
+<div id="dgame" hidden>
+<div id="opp" class="opp"></div>
+<div id="tbl" class="tbl"></div>
+<div id="dmsg" class="dmsg"></div>
+<div id="hand" class="hand"></div>
+<div class="acts"><button id="dtake">Беру</button><button id="dpass">Бито / Пас</button></div>
+</div>
+<button id="loan2">Попросить добавку 500 🪙</button>
+</div>
+<div class="fine">Масти: 🐟 🥛 🎀 🍖, ранги от 6 до туза (в колоде на 27 карт нет 🍖). Дурак теряет ставку, остальные делят её.</div>
+</div>
+<div id="trou" hidden>
+<div class="card">
+<div class="bal"><span>Баланс: <b id="bal4">1500</b> 🪙</span><span id="rhist"></span></div>
+<div id="rcat" class="op rcat"></div>
+<div class="wl"><div id="wh"></div><div id="wb"></div><div id="rn" class="rnum">?</div></div>
+<div class="dmsg" id="rmsg">Выбери ставку и крути!</div>
+<div class="bets" id="rtype"><button data-t="r" class="on">🔴 Красное ×2</button><button data-t="b">⚫ Чёрное ×2</button><button data-t="n">🔢 Число ×36</button></div>
+<div class="set">
+<label id="rnl" hidden>Число 0–36<input type="number" id="rnv" min="0" max="36" value="7"></label>
+<label>Ставка 🪙<input type="number" id="ra" min="1" value="50"></label>
+<button id="rgo">КРУТИТЬ РУЛЕТКУ</button>
+</div>
+</div>
+</div>
+<div id="tsg" hidden>
+<div class="card" id="sgcard">
+<div class="bal"><span>Баланс: <b id="bal5">1500</b> 🪙</span><span>🔫 Дробовик</span></div>
+<div id="sgset" class="set">
+<label>Игроки<select id="sgn"><option value="2">2 (ты + кот)</option><option value="3">3 (ты + 2 кота)</option><option value="4">4 (ты + 3 кота)</option></select></label>
+<label>Ставка 🪙<input type="number" id="sgs" min="1" value="50"></label>
+<button id="sggo">Зарядить дробовик</button></div>
+<div id="sggame" hidden>
+<div class="sgrow" id="sgopps"></div>
+<div class="dmsg" id="sgshell"></div>
+<div class="dmsg" id="sgmsg"></div>
+<div class="dmsg" id="sghp"></div>
+<div class="hand" id="sgit"></div>
+<div class="acts" id="sgacts"></div>
+</div>
+<div class="flash" id="sgflash"></div>
+</div>
+<div class="fine">Дробовик игрушечный, всё понарошку. Побеждает последний выживший, банк = ставка × число игроков. 🔍 покажет патрон · 🍺 выбьет патрон · 🎰 следующий пропустит ход · 🥛 +1❤️ · 🔪 мягкий ножик: выстрел ×2 · 🥇 золотое молочко (редкое, 5%): украсть вещь. Холостой в себя — ход остаётся твоим.</div>
+</div>
+<div id="tbj" hidden>
+<div class="card">
+<div class="bal"><span>Баланс: <b id="bal6">1500</b> 🪙</span><span>🂡 Блэкджек</span></div>
+<div id="bjset" class="set">
+<details open class="rules"><summary>📖 Правила блэкджека</summary>Цель: набрать больше очков, чем у кота-дилера, но не больше 21. Карты 2–10 стоят свой номинал, В/Д/К — по 10, туз — 11 или 1. Тебе и дилеру раздают по 2 карты, одна карта дилера закрыта.<br>• «Взять» — ещё карта<br>• «Хватит» — остановиться, дилер добирает до 17<br>• «Удвоить» — ставка ×2 и ровно одна карта<br>Перебор (больше 21) — проигрыш. Победа платит ×2, блэкджек (21 с двух карт) — ×2,5, ничья возвращает ставку.</details>
+<label>Ставка 🪙<input type="number" id="bjs" min="1" value="50"></label>
+<button id="bjgo">Раздать карты</button></div>
+<div id="bjgame" hidden>
+<div id="bjd" class="op rcat"></div>
+<div class="hand" id="bjdh"></div>
+<div class="dmsg" id="bjmsg"></div>
+<div class="hand" id="bjph"></div>
+<div class="acts"><button id="bjhit">Взять</button><button id="bjst">Хватит</button><button id="bjdb">Удвоить</button></div>
+</div>
+</div>
+</div>
+<div id="tpk" hidden>
+<div class="card">
+<div class="bal"><span>Баланс: <b id="bal7">1500</b> 🪙</span><span>♠️ Покер</span></div>
+<div id="pkset" class="set">
+<details open class="rules"><summary>📖 Правила покера (Техасский холдем)</summary>Ты играешь против кота Рыжика. У каждого по 2 закрытые карты, на стол выкладывают 5 общих: флоп (3), тёрн (1) и ривер (1). Побеждает лучшая комбинация из 5 карт среди семи.<br>Старшинство: старшая карта &lt; пара &lt; две пары &lt; тройка &lt; стрит &lt; флеш &lt; фулл-хаус &lt; каре &lt; стрит-флеш. Масти 🐟 🥛 🎀 🍖 равны.<br>Ставка = анте, оба вносят её в банк. В каждом круге ты ходишь первым: «Чек» или «Ставка» (размер = анте). Кот может сбросить, уравнять или сам поставить — тогда ты уравниваешь или сбрасываешь. Победитель забирает банк.</details>
+<label>Анте / ставка 🪙<input type="number" id="pks" min="1" value="50"></label>
+<button id="pkgo">Раздать карты</button></div>
+<div id="pkgame" hidden>
+<div id="pkc" class="op rcat"></div>
+<div class="hand" id="pkch"></div>
+<div class="dmsg" id="pkpot"></div>
+<div class="hand" id="pkb"></div>
+<div class="dmsg" id="pkmsg"></div>
+<div class="hand" id="pkmy"></div>
+<div class="acts"><button id="pkchk">Чек</button><button id="pkbet">Ставка</button><button id="pkcall">Колл</button><button id="pkfold">Фолд</button></div>
+</div>
+</div>
+</div>
+<div id="tshop" hidden>
+<div class="card">
+<div class="bal"><span>Баланс: <b id="bal8">1500</b> 🪙</span><span>🛍️ Магазин</span></div>
+<div class="dmsg">Скины фона: купи один раз и меняй когда хочешь</div>
+<div id="skins" class="skins"></div>
+</div>
+</div>
+<div id="tadm" hidden>
+<div class="card">
+<div id="alock" class="set"><div class="bal"><span>🔒 Админ-панель</span></div>
+<label>Пароль<input type="password" id="apw"></label><button id="alogin">Войти</button></div>
+<div id="apanel" class="set" hidden>
+<div class="bal"><span>🛠️ Админ</span><span>Баланс: <b id="bal3">1500</b></span></div>
+<label>Категория<select id="acat"><option value="p">👤 Игрок</option><option value="sl">🎰 Слоты</option><option value="ro">🎡 Рулетка</option><option value="du">🃏 Дурак</option><option value="sg">🔫 Дробовик</option><option value="bj">🂡 Блэкджек</option><option value="pk">♠️ Покер</option><option value="shop">🛍️ Магазин</option></select></label>
+<div class="set asec" data-c="p">
+<label>Баланс<input type="number" id="abal" value="1500" min="0"></label><button id="abtn">Выставить баланс</button>
+<label>Добавить / отнять<input type="number" id="aadd" value="500"></label><button id="aaddb">Применить</button>
+<div class="dmsg">💾 Сохранения игрока</div>
+<button id="asv">Создать сохранение</button>
+<textarea id="asvt" rows="3" placeholder="Тут появится код сохранения. Чтобы загрузить, вставь код сюда"></textarea>
+<button id="asvl">Вставить сохранение</button>
+<button id="asvd">Удалить сохранение</button>
+</div>
+<div class="set asec" data-c="sl" hidden><label>Шанс выигрыша %<input type="number" id="ax1" min="0" max="100" placeholder="авто"></label></div>
+<div class="set asec" data-c="ro" hidden><label>Шанс выигрыша %<input type="number" id="ax2" min="0" max="100" placeholder="авто"></label></div>
+<div class="set asec" data-c="du" hidden><label>Ошибки котов %<input type="number" id="ax3" min="0" max="100" placeholder="0"></label></div>
+<div class="set asec" data-c="bj" hidden><label>Шанс победы игрока %<input type="number" id="ax4" min="0" max="100" placeholder="авто"></label></div>
+<div class="set asec" data-c="pk" hidden><label>Шанс победы игрока %<input type="number" id="ax5" min="0" max="100" placeholder="авто"></label></div>
+<div class="set asec" data-c="shop" hidden><button id="aunl">Открыть все скины</button><button id="alk">Сбросить покупки</button></div>
+<div class="set asec" data-c="sg" hidden>
+<label>🔍 Лупа (вес)<input type="number" id="iw0" value="20" min="0"></label>
+<label>🍺 Пиво (вес)<input type="number" id="iw1" value="20" min="0"></label>
+<label>🎰 Автомат (вес)<input type="number" id="iw2" value="20" min="0"></label>
+<label>🥛 Молоко (вес)<input type="number" id="iw3" value="20" min="0"></label>
+<label>🔪 Ножик (вес)<input type="number" id="iw4" value="20" min="0"></label>
+<label>🥇 Золотое молочко %<input type="number" id="iw5" value="5" min="0" max="100" step="0.01"></label>
+<label>Боевых патронов %<input type="number" id="ixl" min="0" max="100" placeholder="авто"></label>
+<label>Жизней у каждого<input type="number" id="ixh" value="3" min="1" max="6"></label>
+</div>
+<button id="asave">Сохранить настройки</button>
+<div class="dmsg">Пустое поле = честная игра без подкрутки</div>
+<button id="aout">Выйти</button>
+</div>
+</div>
+</div>
+<div class="fine">Игра виртуальная, настоящих денег тут нет. Просто для развлечения.</div>
+</div>
+
+<script>
+(function(){
+var S=[{e:'🐱',w:2,m:50},{e:'💎',w:3,m:25},{e:'🎀',w:5,m:15},{e:'🐟',w:8,m:10},{e:'🥛',w:12,m:6}];
+var pool=[];S.forEach(function(s){for(var i=0;i<s.w;i++)pool.push(s)});
+var bal=1500,bet=50,busy=false;
+var $=function(i){return document.getElementById(i)};
+var say=$('say'),dealer=$('dealer');
+var L={
+ win:['Мяу-мяу! Ты выиграл! Мурррр 😻','Ого, фортуна на твоей стороне! *виляет хвостиком*','Вот это удача! С тебя только погладить за ушком~'],
+ small:['Хоть что-то! Пара — это тоже мило 🐾','Маленький выигрыш, но я всё равно мурчу!'],
+ lose:['Мимо... Но я в тебя верю, мяу!','Хвост дрожит, но ставка не пошла. Ещё разок?','Ничего, барабаны просто капризничают 🙀'],
+ jack:['НЕКО-ДЖЕКПОТ!!! МЯЯЯУ!!! 🎉🐱🎉']
+};
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function talk(t){say.textContent=t}
+[10,50,100,250].forEach(function(b){
+ var el=document.createElement('button');el.textContent=b;
+ if(b===bet)el.className='on';
+ el.onclick=function(){if(busy)return;bet=b;[].forEach.call($('bets').children,function(c){c.className=''});el.className='on'};
+ $('bets').appendChild(el);
+});
+function rnd(){return pool[Math.floor(Math.random()*pool.length)]}
+function show(){$('bal').textContent=$('bal2').textContent=$('bal3').textContent=$('bal4').textContent=$('bal5').textContent=$('bal6').textContent=$('bal7').textContent=$('bal8').textContent=Math.round(bal);svAuto();$('loan').style.display=$('loan2').style.display=bal<50?'block':'none'}
+$('loan').onclick=function(){bal+=500;show();talk('Держи, но это в долг! Я записала в блокнотик 📒')};
+$('spin').onclick=function(){
+ if(busy)return;
+ if(bal<bet){talk('Не хватает монет, мяу. Поставь поменьше!');return}
+ busy=true;$('spin').disabled=true;dealer.classList.remove('win');
+ bal-=bet;show();$('last').textContent='0';talk('Крутим-вертим... 🎰');
+ var res=slotRes(),ids=[0,1,2];
+ ids.forEach(function(i){
+  var el=$('r'+i);el.classList.add('spinning');
+  var t=setInterval(function(){el.textContent=rnd().e},70);
+  setTimeout(function(){clearInterval(t);el.classList.remove('spinning');el.textContent=res[i].e;
+   if(i===2)finish(res)},800+i*450);
+ });
+};
+function finish(r){
+ var win=0,msg;
+ if(r[0]===r[1]&&r[1]===r[2]){win=bet*r[0].m;msg=r[0].m===50?pick(L.jack):pick(L.win)}
+ else if(r[0]===r[1]||r[1]===r[2]||r[0]===r[2]){win=Math.round(bet*0.5);msg=pick(L.small)}
+ else msg=pick(L.lose);
+ bal+=win;show();$('last').textContent=win;talk(msg);
+ if(win>bet)dealer.classList.add('win');
+ busy=false;$('spin').disabled=false;
+}
+var SU=['🐟','🥛','🎀','🍖'],RK=['6','7','8','9','10','В','Д','К','Т'],NM=['Ты','Барсик','Рыжик','Уголёк'],G=null,sel=0;
+function add(){bal+=500;show();talk('Добавка так добавка! Держи 500 🪙 *мурчит*')}
+$('loan').onclick=$('loan2').onclick=add;
+function tab(t){['slots','dur','rou','sg','bj','pk','shop','adm'].forEach(function(k){$('t'+k).hidden=k!==t;$('tb-'+k).className=k===t?'on':''})}
+['slots','dur','rou','sg','bj','pk','shop','adm'].forEach(function(k){$('tb-'+k).onclick=function(){tab(k)}});
+function dm(t){$('dmsg').textContent=t}
+function val(c){return c.r+(c.s===G.tr?10:0)}
+function beats(a,d){return d.s===a.s?d.r>a.r:d.s===G.tr}
+function opn(p){return !p.d}
+function nx(p){do{p=(p+1)%G.n}while(G.out[p]);return p}
+function ch(c,t,x){return '<'+t+' class="cd'+(c.s===G.tr?' tr':'')+'"'+(x||'')+'><span>'+RK[c.r]+'</span><span>'+SU[c.s]+'</span></'+t+'>'}
+function allowed(c){var t=G.table;if(t.length>=G.limit)return [];return G.hands[c].filter(function(x){return !t.length||t.some(function(p){return p.a.r===x.r||(p.d&&p.d.r===x.r)})})}
+function render(){
+ var h='',i;
+ for(i=1;i<G.n;i++){var mo=G.fx[i]||(G.over?(G.out.indexOf(false)===i?'sad':'happy'):G.out[i]?'sleep':i===G.cur?(i===G.def?'think':'act'):'idle');
+  h+='<div class="op'+(i===G.cur?' act':'')+(G.jmp===i?' jump':'')+'">'+((G.say[i]||(G.out[i]&&!G.over))?'<div class="bb">'+(G.say[i]||'💤')+'</div>':'')+catSvg(i,mo)+'<b>'+NM[i]+'</b><br>🂠 ×'+G.hands[i].length+'</div>'}
+ G.jmp=-1;$('opp').innerHTML=h;
+ $('trinfo').textContent='Колода '+G.deck.length+' · козырь '+SU[G.tr];
+ $('tbl').innerHTML=G.table.map(function(p,k){return '<div class="pr'+(!p.d&&k===sel?' sel':'')+(k===G.last?' nw':'')+'" data-i="'+k+'">'+ch(p.a,'div')+(p.d?ch(p.d,'div'):'')+'</div>'}).join('')||'<span class="dmsg">Стол пуст</span>';
+ G.last=-1;G.hands[0].sort(function(a,b){return a.s-b.s||a.r-b.r});
+ $('hand').innerHTML=G.hands[0].map(function(c,k){return ch(c,'button',' data-i="'+k+'"')}).join('');
+ $('dtake').hidden=G.mode!=='def';$('dpass').hidden=!(G.mode==='thr'&&G.table.length);
+}
+function newDeck(ns){var d=[],s,r,i,j,t;for(s=0;s<ns;s++)for(r=0;r<9;r++)d.push({s:s,r:r});for(i=d.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=d[i];d[i]=d[j];d[j]=t}return d}
+$('dgo').onclick=function(){
+ var n=+$('dn').value,st=Math.floor(+$('ds').value),i;
+ if(!(st>0)){talk('Укажи ставку, мяу!');return}
+ if(bal<st){talk('Не хватает монет, мяу. Попроси добавку или снизь ставку!');return}
+ bal-=st;show();dealer.classList.remove('win');
+ var d=newDeck(+$('dk').value||4),hs=[];for(i=0;i<n;i++)hs.push(d.splice(d.length-6,6));
+ G={n:n,diff:+$('dd').value,stake:st,hands:hs,deck:d,tr:d[0].s,out:[],table:[],over:false,mode:'',cur:-1,fx:[],say:[],last:-1};
+ for(i=0;i<n;i++)G.out.push(false);
+ var best=-1,bv=99;hs.forEach(function(h,k){h.forEach(function(c){if(c.s===G.tr&&c.r<bv){bv=c.r;best=k}})});
+ G.att=best<0?Math.floor(Math.random()*n):best;
+ $('dset').hidden=true;$('dgame').hidden=false;
+ talk('Раздаю! Козырь — '+SU[G.tr]+'. Не зевай, мяу 🃏');startRound();
+};
+function startRound(){
+ var k,p;G.def=nx(G.att);G.table=[];G.limit=Math.min(6,G.hands[G.def].length);G.ti=0;G.passes=0;G.taking=false;sel=0;G.thr=[];
+ for(k=0;k<G.n;k++){p=(G.att+k)%G.n;if(p!==G.def&&!G.out[p])G.thr.push(p)}
+ turn();
+}
+function turn(){
+ if(G.over)return;
+ var op=G.table.findIndex(opn);
+ if(op>=0&&!G.taking){
+  if(!G.table[sel]||G.table[sel].d)sel=op;
+  G.cur=G.def;G.mode=G.def===0?'def':'ai';render();
+  if(G.def===0)dm('Отбивайся: выбери карту (или стол) и жми. Либо «Беру»');else setTimeout(aiDef,800);
+  return}
+ if(G.passes>=G.thr.length){G.mode='';render();setTimeout(function(){endRound(G.taking)},600);return}
+ var c=G.thr[G.ti%G.thr.length];G.cur=c;
+ if(c===0&&(!G.table.length||allowed(0).length)){G.mode='thr';render();dm(G.table.length?'Подкинь карту или жми «Бито / Пас»':'Твоя атака: ходи любой картой');return}
+ G.mode='ai';render();
+ if(c===0){pass(0);return}
+ setTimeout(function(){aiThrow(c)},800);
+}
+function doThrow(c,card){G.hands[c].splice(G.hands[c].indexOf(card),1);G.table.push({a:card,d:null});G.passes=0;G.last=G.table.length-1;if(c){dm(NM[c]+' ходит: '+RK[card.r]+SU[card.s]);cs(c,pick(['Мяу! '+RK[card.r]+SU[card.s],'Держи, мр-р!','Лови, мяв!','Бей, если сможешь 😼']),'act')}turn()}
+function pass(c){G.passes++;G.ti++;turn()}
+function takeIt(){G.taking=true;G.passes=0;G.ti=0;dm(NM[G.def]+' берёт карты');if(G.def)cs(G.def,'Ш-ш-ш!','mad');turn()}
+function defend(pi,card){
+ var h=G.hands[G.def];h.splice(h.indexOf(card),1);G.table[pi].d=card;G.mode='';
+ dm(G.def?NM[G.def]+' бьёт: '+RK[card.r]+SU[card.s]:'');G.last=pi;if(G.def)cs(G.def,pick(['Мур.','Мрр~','Мя.']),'happy');
+ if(!G.table.some(opn)){
+  if(G.table.length>=G.limit||!h.length){render();setTimeout(function(){endRound(false)},700);return}
+  G.ti=0;G.passes=0}
+ turn();
+}
+function aiDef(){
+ var D=df();
+ var pi=G.table.findIndex(opn),a=G.table[pi].a;
+ var bs=G.hands[G.def].filter(function(x){return beats(a,x)}).sort(function(x,y){return val(x)-val(y)});
+ var take=!bs.length;
+ if(!take){if(D===0)take=Math.random()<.2;else if(D===2&&bs[0].s===G.tr&&a.s!==G.tr&&G.deck.length>3&&a.r<4)take=true}
+ if(take)takeIt();else defend(pi,D===0?bs[Math.floor(Math.random()*bs.length)]:bs[0]);
+}
+function aiThrow(c){
+ var D=df();
+ var al=allowed(c).sort(function(x,y){return val(x)-val(y)}),pk=null;
+ if(al.length){
+  var nt=al.filter(function(x){return x.s!==G.tr});
+  if(!G.table.length){
+   pk=D===0?al[Math.floor(Math.random()*al.length)]:(nt[0]||al[0]);
+   if(D===2&&nt.length){var cn=function(x){return G.hands[c].filter(function(y){return y.r===x.r}).length};nt.sort(function(x,y){return cn(y)-cn(x)||val(x)-val(y)});pk=nt[0]}
+  }else{
+   var ok=D===0?Math.random()<.5:D===1?nt.length>0:(nt.length>0||(!G.deck.length&&!G.taking));
+   if(ok)pk=nt[0]||al[0];
+  }
+ }
+ if(pk)doThrow(c,pk);else pass(c);
+}
+function draw(p){while(G.hands[p].length<6&&G.deck.length)G.hands[p].push(G.deck.pop())}
+function endRound(took){
+ var d=G.def,h=G.hands[d],k,p,na;
+ if(took)G.table.forEach(function(x){h.push(x.a);if(x.d)h.push(x.d)});
+ G.table=[];
+ for(k=0;k<G.n;k++){p=(G.att+k)%G.n;if(p!==d)draw(p)}
+ draw(d);
+ for(k=0;k<G.n;k++)if(!G.hands[k].length&&!G.deck.length)G.out[k]=true;
+ if(G.out.filter(function(o){return !o}).length<2)return dfin();
+ na=took?nx(d):d;if(G.out[na])na=nx(na);
+ G.att=na;dm(took?NM[d]+' забрал карты':'Бито!');startRound();
+}
+function dfin(){
+ G.over=true;G.mode='';G.cur=-1;var l=G.out.indexOf(false),m;
+ if(l<0){bal+=G.stake;m='Ничья! Ставка вернулась.';talk('Ничья, мяу! Ставку возвращаю 🐾')}
+ else if(l===0){m='Ты остался дураком 🤡 −'+G.stake+' 🪙';talk(pick(L.lose))}
+ else{var w=Math.round(G.stake*G.n/(G.n-1));bal+=w;m='Дурак — '+NM[l]+'! Ты получил '+w+' 🪙';talk(pick(L.win));dealer.classList.add('win')}
+ for(var q=1;q<G.n;q++)G.say[q]=l===q?'Мяааў…':'Мурррр~';render();dm(m);show();$('dset').hidden=false;
+}
+$('hand').onclick=function(e){
+ var b=e.target.closest('[data-i]');if(!b||!G||G.over)return;
+ var c=G.hands[0][+b.dataset.i];
+ if(G.mode==='def'){
+  var pi=G.table[sel]&&!G.table[sel].d?sel:G.table.findIndex(opn);
+  if(!beats(G.table[pi].a,c)){dm('Эта карта не бьёт 🙀');return}
+  defend(pi,c);
+ }else if(G.mode==='thr'){
+  if(allowed(0).indexOf(c)<0){dm('Так подкинуть нельзя');return}
+  doThrow(0,c);
+ }
+};
+$('tbl').onclick=function(e){var b=e.target.closest('[data-i]');if(!b||!G||G.over)return;var k=+b.dataset.i;if(G.table[k]&&!G.table[k].d){sel=k;render()}};
+$('dtake').onclick=function(){if(G&&G.mode==='def')takeIt()};
+$('dpass').onclick=function(){if(G&&G.mode==='thr')pass(0)};
+var cfg={sl:null,ro:null,dur:0},CATS=[null,['#9aa0a8','#5d636b','#7fc96a'],['#e8963c','#b5611b','#f2c230'],['#2b2b33','#16161c','#d8e03a']];
+function df(){return Math.random()*100<cfg.dur?0:G.diff}
+function slotRes(){
+ if(cfg.sl===null)return [rnd(),rnd(),rnd()];
+ if(Math.random()*100<cfg.sl){var s=rnd();return [s,s,s]}
+ var a=S.slice().sort(function(){return Math.random()-.5});return [a[0],a[1],a[2]];
+}
+$('cb').oninput=function(){var v=Math.floor(+this.value);if(v>0){bet=v;[].forEach.call($('bets').children,function(c){c.className=''})}};
+function catSvg(i,mo){
+ var c=CATS[i],f=c[0],s=c[1],e=c[2];
+ function eye(x){return '<ellipse cx="'+x+'" cy="42" rx="7" ry="6.2" fill="'+e+'"/><ellipse class="pu" cx="'+x+'" cy="42" rx="1.7" ry="5.4" fill="#0a0a0a"/><rect class="lid" x="'+(x-8)+'" y="34" width="16" height="16" fill="'+f+'"/>'}
+ return '<svg class="cat m-'+mo+'" viewBox="0 0 80 80"><g class="ear l"><path d="M10 36L13 6L35 21Z" fill="'+f+'"/><path d="M15 27L16 14L27 21Z" fill="#f2a6b6"/></g><g class="ear r"><path d="M70 36L67 6L45 21Z" fill="'+f+'"/><path d="M65 27L64 14L53 21Z" fill="#f2a6b6"/></g><ellipse cx="40" cy="46" rx="29" ry="26" fill="'+f+'"/><path d="M40 21v9M32 22l2 8M48 22l-2 8M11 46h8M12 52h7M69 46h-8M68 52h-7" stroke="'+s+'" stroke-width="2.6" stroke-linecap="round" fill="none"/><ellipse cx="40" cy="57" rx="11" ry="8" fill="#fff" opacity=".8"/>'+eye(27)+eye(53)+'<path d="M37 51h6l-3 4Z" fill="#e58a9a"/><path d="M40 55v3M40 58q-4 4-8 1M40 58q4 4 8 1" stroke="#555" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M28 57l-16-3M28 60l-16 4M52 57l16-3M52 60l16 4" stroke="#ddd" stroke-width=".9" stroke-linecap="round"/></svg>';
+}
+function cs(i,t,m){G.jmp=i;G.say[i]=t;G.fx[i]=m;setTimeout(function(){if(G.say[i]===t){G.say[i]='';G.fx[i]='';render()}},1700)}
+setInterval(function(){
+ if(!G||G.over||$('tdur').hidden)return;
+ var i=1+Math.floor(Math.random()*(G.n-1));
+ if(!G.out[i]&&!G.say[i]){cs(i,pick(['мрр','*зевает*','мур?','*лижет лапу*','*хвост дёрг*']),Math.random()<.5?'happy':'');render()}
+},4500);
+var RED=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36],rt='r',rbusy=false,hist=[];
+function col(n){return n===0?'g':RED.indexOf(n)>-1?'r':'b'}
+function wins(n,t,x){return t==='n'?n===x:col(n)===t}
+$('rtype').onclick=function(e){var b=e.target.closest('button');if(!b||rbusy)return;rt=b.dataset.t;[].forEach.call(this.children,function(c){c.className=c===b?'on':''});$('rnl').hidden=rt!=='n'};
+$('rgo').onclick=function(){
+ if(rbusy)return;
+ var a=Math.floor(+$('ra').value),x=Math.floor(+$('rnv').value),i;
+ if(!(a>0)){rm('Поставь хоть что-то, мяу!');return}
+ if(a>bal){rm('Не хватает монет! Попроси добавку 🐾');return}
+ if(rt==='n'&&!(x>=0&&x<=36)){rm('Число должно быть от 0 до 36');return}
+ rbusy=true;bal-=a;show();dealer.classList.remove('win');rcr('act',pick(['Ставки сделаны!','Крутим, мяу!','Шарик пошёл!']));
+ var n=Math.floor(Math.random()*37);
+ if(cfg.ro!==null){var w=Math.random()*100<cfg.ro,pl=[];for(i=0;i<37;i++)if(wins(i,rt,x)===w)pl.push(i);if(pl.length)n=pl[Math.floor(Math.random()*pl.length)]}
+ var el=$('rn'),t=setInterval(function(){var k=Math.floor(Math.random()*37);el.textContent=k;el.className='rnum '+col(k)},80);
+ spinFx(true);rm('Шарик бежит… 🎡');
+ setTimeout(function(){
+  clearInterval(t);spinFx(false);el.textContent=n;el.className='rnum '+col(n);
+  var win=wins(n,rt,x)?a*(rt==='n'?36:2):0;bal+=win;show();
+  hist.unshift(n);hist=hist.slice(0,10);
+  $('rhist').innerHTML=hist.map(function(k){return '<i class="dot" style="background:'+{r:'#d62839',b:'#444',g:'#1f9d55'}[col(k)]+'"></i>'}).join('');
+  $('rmsg').textContent='Выпало '+n+(col(n)==='r'?' 🔴':col(n)==='b'?' ⚫':' 🟢')+(win?' — выигрыш +'+win+' 🪙':' — мимо, −'+a+' 🪙');talk(win?pick(L.win)+' +'+win:pick(L.lose));if(win)dealer.classList.add('win');rcr(win?'happy':'sad',win?'Мур! Выигрыш!':'Мяу... мимо');rbusy=false;
+ },2200);
+};
+$('alogin').onclick=function(){if($('apw').value==='одеяло'){$('alock').hidden=true;$('apanel').hidden=false}else talk('Неверный пароль, мяу 🙀');$('apw').value=''};
+$('aout').onclick=function(){$('apanel').hidden=true;$('alock').hidden=false;tab('slots')};
+$('abtn').onclick=function(){var v=+$('abal').value;if(v>=0){bal=v;show();talk('Баланс теперь '+Math.round(v)+' 🪙')}};
+function nv(id){var v=$(id).value.trim();return v===''?null:Math.min(100,Math.max(0,+v))}
+$('asave').onclick=function(){cfg.sl=nv('ax1');cfg.ro=nv('ax2');cfg.dur=nv('ax3')||0;K.forEach(function(k,i){cfg.w[k]=Math.max(0,+$('iw'+i).value||0)});cfg.gold=Math.min(100,Math.max(0,+$('iw5').value||0));cfg.live=nv('ixl');cfg.bj=nv('ax4');cfg.pk=nv('ax5');cfg.hp=Math.min(6,Math.max(1,Math.floor(+$('ixh').value)||3));talk('Настройки сохранены 🐾')};
+var IT={lupa:'🔍',beer:'🍺',auto:'🎰',milk:'🥛',knife:'🔪',gold:'🥇'},K=['lupa','beer','auto','milk','knife'],S2=null;
+var ATK=['Мяу, держи!','Получай, мур!','Ш-ш-ш... бах!','Тебе конец, мяу!','Лови, мррр!'],HIT=['Мяааў!','Ай, лапка!','Ш-ш-ш!','Больно, мяу!'],OKL=['Фух, мур~','Повезло, мяу','Пронесло...'];
+var ILN={lupa:'Хм, что там?',beer:'Не нужен нам этот патрон',auto:'Пропускай, мяу',milk:'Мурр, вкусно~',knife:'Наточу коготки 😼',gold:'Моё, мяу!'};
+cfg.w={lupa:20,beer:20,auto:20,milk:20,knife:20};cfg.gold=5;cfg.live=null;cfg.hp=3;
+function rm(t){$('rmsg').textContent=t;talk(t)}
+function sm(t){S2.lg.push(t);S2.lg=S2.lg.slice(-3);$('sgmsg').textContent=S2.lg.join('\n')}
+function alive(i){return S2.hp[i]>0}
+function nx2(p){var q=p;do{q=(q+1)%S2.n}while(!alive(q));return q}
+function ss(i,t,m){S2.say[i]=t;S2.fx[i]=m||'';if(i)S2.jm=i;setTimeout(function(){if(S2&&S2.say[i]===t){S2.say[i]='';S2.fx[i]='';rend2()}},1800)}
+function fly(t){var e=document.createElement('span');e.className='fly';e.textContent=t;$('sgcard').appendChild(e);setTimeout(function(){e.remove()},1000)}
+function fl(c){var f=$('sgflash');f.className='flash';void f.offsetWidth;f.className='flash f'+c}
+function shk(){var c=$('sgcard');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake')}
+function rollItem(){
+ if(Math.random()*100<cfg.gold)return 'gold';
+ var t=0,r,k;K.forEach(function(x){t+=cfg.w[x]});if(t<=0)return 'milk';
+ r=Math.random()*t;for(k=0;k<K.length;k++){r-=cfg.w[K[k]];if(r<0)return K[k]}return K[0];
+}
+function reload(){
+ var tot=4+Math.floor(Math.random()*5)+(S2.n>2?1:0),i,p,k,lv=cfg.live===null?1+Math.floor(Math.random()*(tot-1)):Math.min(tot-1,Math.max(1,Math.round(tot*cfg.live/100)));
+ S2.sh=[];for(i=0;i<tot;i++)S2.sh.push(i<lv);S2.sh.sort(function(){return Math.random()-.5});
+ S2.lv=lv;S2.bl=tot-lv;S2.known=null;S2.kp=-1;
+ for(p=0;p<S2.n;p++)if(alive(p))for(k=0;k<2;k++)if(S2.inv[p].length<6)S2.inv[p].push(rollItem());
+ return '♻️ Заряд: 🔴×'+lv+' боевых, ⚪×'+(tot-lv)+' холостых. Каждому по 2 вещи!';
+}
+function rend2(){
+ if(!S2)return;
+ var i,h='',a='',my=S2.turn===0&&!S2.over&&alive(0);
+ var hp=function(p){return '❤️'.repeat(S2.hp[p])+'🖤'.repeat(S2.max-S2.hp[p])};
+ for(i=1;i<S2.n;i++){
+  var mo=S2.fx[i]||(!alive(i)?'sleep':S2.over?'happy':S2.turn===i?'think':'idle');
+  h+='<div class="op sgo'+(alive(i)?'':' dead')+(S2.turn===i&&!S2.over?' act':'')+(S2.jm===i?' jump':'')+'">'+((S2.say[i]||!alive(i))?'<div class="bb">'+(S2.say[i]||'💀')+'</div>':'')+catSvg(i,mo)+'<b>'+NM[i]+'</b><br>'+hp(i)+'<br>'+(S2.inv[i].map(function(k){return IT[k]}).join(' ')||'—')+'</div>';
+  if(alive(i))a+='<button data-t="'+i+'">🎯 '+NM[i]+'</button>';
+ }
+ S2.jm=-1;$('sgopps').innerHTML=h;
+ $('sgshell').textContent='Осталось: 🔴×'+S2.lv+' ⚪×'+S2.bl+' · В стволе: '+(S2.kp===0?(S2.known==='live'?'🔴':'⚪'):'❓')+(S2.knife?' · 🔪 ×2':'');
+ $('sghp').textContent='Ты: '+hp(0);
+ $('sgit').innerHTML=S2.inv[0].map(function(k){return '<button class="it" data-k="'+k+'">'+IT[k]+'</button>'}).join('')||'<span class="dmsg">Вещей нет</span>';
+ $('sgacts').innerHTML=a+'<button data-t="0">🤪 В себя</button>';
+ [].forEach.call($('sgacts').children,function(b){b.disabled=!my});
+}
+function fin(w,m){
+ S2.over=true;var pot=S2.st*S2.n;
+ if(w){bal+=pot;m+=' 🏆 Ты победил! +'+pot+' 🪙';talk(pick(L.win));dealer.classList.add('win')}
+ else{m+=' ☠️ Ты выбыл. −'+S2.st+' 🪙';talk(pick(L.lose))}
+ for(var i=1;i<S2.n;i++)if(alive(i))ss(i,w?'Мяу...':'Мурррр~',w?'sad':'happy');
+ sm(m);show();rend2();$('sgset').hidden=false;
+}
+function shoot(me,t){
+ var live=S2.sh.shift(),d=S2.knife?2:1,nm=NM[me],tn=t===me?'в себя':NM[t],m,o,cnt=0,i;
+ S2.knife=false;S2.known=null;S2.kp=-1;fl(live?1:0);fly(live?'💥':'💨');
+ if(me)ss(me,pick(t===me?['Рискну, мяу...','Себя? Мррр...']:ATK),'act');
+ if(live){S2.lv--;S2.hp[t]=Math.max(0,S2.hp[t]-d);m='💥 БАХ! '+nm+' → '+tn+': −'+d+'❤️';shk();if(t)ss(t,pick(HIT),'mad');
+  if(!alive(t)){m+=' 💀 '+NM[t]+' выбыл!';S2.inv[t]=[]}}
+ else{S2.bl--;m='💨 '+nm+' → '+tn+': щёлк, холостой.';if(me&&t===me)ss(me,pick(OKL),'happy')}
+ for(i=0;i<S2.n;i++)if(alive(i))cnt++;
+ if(!alive(0))return fin(false,m);
+ if(cnt===1)return fin(true,m);
+ if(!S2.sh.length)m+=' '+reload();
+ if(!live&&t===me&&alive(me))m+=' '+nm+' ходит снова.';
+ else{o=nx2(me);while(S2.skip[o]){S2.skip[o]=false;m+=' '+NM[o]+' пропускает ход 🎰.';o=nx2(o)}S2.turn=o}
+ sm(m);step();
+}
+function useItem(p,k){
+ var inv=S2.inv[p],nm=NM[p],m,e,s,v=[],i;
+ if(k==='gold'){
+  for(i=0;i<S2.n;i++)if(i!==p&&alive(i)&&S2.inv[i].length)v.push(i);
+  if(!v.length){if(!p)sm('Красть не у кого!');return false}
+  i=v[Math.floor(Math.random()*v.length)];
+  s=S2.inv[i].splice(Math.floor(Math.random()*S2.inv[i].length),1)[0];
+  inv.splice(inv.indexOf('gold'),1);if(inv.length<6)inv.push(s);
+  m=nm+' стащил '+IT[s]+' у '+NM[i]+' золотым молочком 🥇';
+ }else{
+  inv.splice(inv.indexOf(k),1);
+  if(k==='lupa'){S2.known=S2.sh[0]?'live':'blank';S2.kp=p;m=p?nm+' смотрит в лупу 🔍':'Ты глянул в лупу: '+(S2.known==='live'?'🔴 БОЕВОЙ':'⚪ холостой')}
+  else if(k==='beer'){e=S2.sh.shift();if(e)S2.lv--;else S2.bl--;S2.known=null;S2.kp=-1;m=nm+' выбил патрон 🍺: '+(e?'🔴 боевой':'⚪ холостой');if(!S2.sh.length)m+=' '+reload()}
+  else if(k==='auto'){i=nx2(p);S2.skip[i]=true;m=nm+' включил автомат 🎰: '+NM[i]+' пропустит ход'}
+  else if(k==='milk'){S2.hp[p]=Math.min(S2.max,S2.hp[p]+1);m=nm+' выпил молоко 🥛 +1❤️'}
+  else{S2.knife=true;m=nm+' достал мягкий ножик 🔪: выстрел ×2'}
+ }
+ fly(IT[k]);if(p)ss(p,ILN[k],k==='milk'?'happy':'act');
+ sm(m);return true;
+}
+function step(){rend2();if(!S2.over&&S2.turn>0)setTimeout(ai,1300)}
+function ai(){
+ if(!S2||S2.over||S2.turn===0)return;
+ var p=S2.turn,c=S2.inv[p],h=function(k){return c.indexOf(k)>-1},kn=S2.kp===p?S2.known:null,pl=S2.lv/S2.sh.length,k=null,op=[],i,t,low=9;
+ for(i=0;i<S2.n;i++)if(i!==p&&alive(i))op.push(i);
+ var vic=op.some(function(i){return S2.inv[i].length});
+ if(S2.hp[p]<S2.max&&h('milk'))k='milk';
+ else if(h('gold')&&vic)k='gold';
+ else if(h('lupa')&&kn===null&&S2.sh.length>1)k='lupa';
+ else if(h('auto')&&!S2.skip[nx2(p)]&&(kn==='live'||pl>=.5))k='auto';
+ else if(h('knife')&&!S2.knife&&kn==='live')k='knife';
+ else if(h('beer')&&kn==='live'&&S2.hp[p]===1)k='beer';
+ if(k){useItem(p,k);rend2();setTimeout(ai,1300);return}
+ op.forEach(function(i){if(S2.hp[i]<low)low=S2.hp[i]});
+ var weak=op.filter(function(i){return S2.hp[i]===low});
+ t=Math.random()<.35?op[Math.floor(Math.random()*op.length)]:weak[Math.floor(Math.random()*weak.length)];
+ shoot(p,kn==='live'?t:kn==='blank'?p:(pl>=.5?t:p));
+}
+$('sggo').onclick=function(){
+ var st=Math.floor(+$('sgs').value),n=+$('sgn').value,h=Math.min(6,Math.max(1,Math.floor(cfg.hp)||3)),i;
+ if(!(st>0)){talk('Укажи ставку, мяу!');return}
+ if(bal<st){talk('Не хватает монет, мяу. Попроси добавку!');return}
+ bal-=st;show();dealer.classList.remove('win');
+ S2={n:n,hp:[],max:h,inv:[],sh:[],known:null,kp:-1,knife:false,skip:[],say:[],fx:[],jm:-1,turn:0,over:false,st:st,lg:[]};
+ for(i=0;i<n;i++){S2.hp.push(h);S2.inv.push([]);S2.skip.push(false)}
+ $('sgset').hidden=true;$('sggame').hidden=false;
+ sm(reload()+' Твой ход!');step();
+};
+$('sgacts').onclick=function(e){var b=e.target.closest('[data-t]');if(!b||b.disabled||!S2||S2.turn!==0||S2.over)return;shoot(0,+b.dataset.t)};
+$('sgit').onclick=function(e){var b=e.target.closest('[data-k]');if(!b||!S2||S2.turn!==0||S2.over)return;if(useItem(0,b.dataset.k))rend2()};
+var wa=0,rct=0;
+function spinFx(on){if(on){wa+=1080+Math.random()*360;$('wh').style.transform='rotate('+wa+'deg)';$('wb').style.transform='rotate('+(-wa*1.4)+'deg)'}}
+function rcr(m,t){clearTimeout(rct);$('rcat').innerHTML=(t?'<div class="bb">'+t+'</div>':'')+catSvg(2,m)+'<b>Рыжик</b> · крупье';if(t)rct=setTimeout(function(){rcr('idle')},2400)}
+rcr('idle','Делайте ставки, мяу!');
+$('acat').onchange=function(){var v=this.value;[].forEach.call(document.querySelectorAll('.asec'),function(e){e.hidden=e.dataset.c!==v})};
+$('aaddb').onclick=function(){var v=+$('aadd').value;if(v){bal=Math.max(0,bal+v);show();talk('Баланс: '+Math.round(bal)+' 🪙')}};
+var RK13=['2','3','4','5','6','7','8','9','10','В','Д','К','Т'],HN=['Старшая карта','Пара','Две пары','Тройка','Стрит','Флеш','Фулл-хаус','Каре','Стрит-флеш'],B=null,P=null;
+cfg.bj=null;cfg.pk=null;
+function mk52(){var d=[],s,r,i,j,t;for(s=0;s<4;s++)for(r=0;r<13;r++)d.push({s:s,r:r});for(i=d.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=d[i];d[i]=d[j];d[j]=t}return d}
+function pc(c,x){return c?'<div class="cd'+(x||'')+'"><span>'+RK13[c.r]+'</span><span>'+SU[c.s]+'</span></div>':'<div class="cd bk">🐾</div>'}
+function bv(h){var t=0,a=0;h.forEach(function(c){if(c.r===12){a++;t+=11}else t+=c.r>=9?10:c.r+2});while(t>21&&a>0){t-=10;a--}return t}
+function brend(){
+ $('bjd').innerHTML=(B.say?'<div class="bb">'+B.say+'</div>':'')+catSvg(1,B.mo)+'<b>Барсик</b> · дилер';
+ $('bjdh').innerHTML=B.dh.map(function(c,i){return i===1&&!B.rev?pc(null):pc(c,i>=B.sd?' dl':'')}).join('')+' <b>'+(B.rev?bv(B.dh):'?')+'</b>';
+ $('bjph').innerHTML=B.ph.map(function(c,i){return pc(c,i>=B.sp?' dl':'')}).join('')+' <b>'+bv(B.ph)+'</b>';
+ B.sd=B.dh.length;B.sp=B.ph.length;
+ var my=!B.over&&!B.rev;$('bjhit').disabled=$('bjst').disabled=!my;$('bjdb').disabled=!(my&&B.ph.length===2&&bal>=B.st);
+}
+function bs(t,m){B.say=t;B.mo=m;brend();setTimeout(function(){if(B&&B.say===t){B.say='';B.mo='idle';brend()}},1800)}
+function bend(r){
+ B.over=true;B.rev=true;
+ var w={bj:B.st*2.5,win:B.st*2,push:B.st,lose:0}[r];bal=Math.round(bal+w);
+ $('bjmsg').textContent={bj:'🂡 Блэкджек! +'+Math.round(w-B.st)+' 🪙',win:'🏆 Победа! +'+(w-B.st)+' 🪙',push:'🤝 Ничья, ставка вернулась',lose:'💀 Проигрыш −'+B.st+' 🪙'}[r];
+ show();
+ if(r==='bj'||r==='win'){talk(pick(L.win));dealer.classList.add('win')}else if(r==='lose')talk(pick(L.lose));
+ bs(r==='lose'?'Мурр, банк мой!':r==='push'?'Ничья, мяу':'Мяааў... твоя взяла',r==='lose'?'happy':r==='push'?'idle':'sad');
+ $('bjset').hidden=false;
+}
+function dplay(){
+ B.rev=true;
+ var pt=bv(B.ph),want=cfg.bj===null||pt>21?null:Math.random()*100<cfg.bj,q=null,t,dk,sim,dt;
+ if(want!==null)for(t=0;t<200&&!q;t++){
+  dk=B.deck.slice().sort(function(){return Math.random()-.5});sim=B.dh.slice();
+  while(bv(sim)<17)sim.push(dk.pop());
+  dt=bv(sim);if(want?(dt>21||dt<pt):(dt>pt&&dt<=21))q=sim.slice(B.dh.length);
+ }
+ bs('Теперь я... 😼','act');
+ (function go1(){
+  if(B.over)return;
+  if(q?q.length>0:bv(B.dh)<17){B.dh.push(q?q.shift():B.deck.pop());brend();setTimeout(go1,800)}
+  else{var d=bv(B.dh);bend(d>21||d<pt?'win':d>pt?'lose':'push')}
+ })();
+}
+$('bjgo').onclick=function(){
+ var st=Math.floor(+$('bjs').value);
+ if(!(st>0)){talk('Укажи ставку, мяу!');return}
+ if(bal<st){talk('Не хватает монет, мяу. Попроси добавку!');return}
+ bal-=st;show();dealer.classList.remove('win');
+ var d=mk52();B={deck:d,ph:[d.pop(),d.pop()],dh:[d.pop(),d.pop()],st:st,rev:false,over:false,sd:0,sp:0,say:'',mo:'act'};
+ $('bjset').hidden=true;$('bjgame').hidden=false;$('bjmsg').textContent='Твой ход: взять, хватит или удвоить?';
+ var a=bv(B.ph),b=bv(B.dh);
+ if(a===21||b===21){B.rev=true;bend(a===21&&b!==21?'bj':a===b?'push':'lose')}else{brend();bs('Раздаю, мяу! 🃏','act')}
+};
+$('bjhit').onclick=function(){
+ if(!B||B.over||B.rev)return;
+ B.ph.push(B.deck.pop());var v=bv(B.ph);brend();
+ if(v>21)bend('lose');else if(v===21)dplay();else bs(pick(['Ещё? Мррр','Рискнёшь?','Мяу~']),'think');
+};
+$('bjst').onclick=function(){if(B&&!B.over&&!B.rev)dplay()};
+$('bjdb').onclick=function(){
+ if(!B||B.over||B.rev||B.ph.length!==2||bal<B.st)return;
+ bal-=B.st;B.st*=2;show();B.ph.push(B.deck.pop());brend();
+ if(bv(B.ph)>21)bend('lose');else dplay();
+};
+function sc5(h){
+ var rs=h.map(function(c){return c.r}).sort(function(a,b){return b-a}),fl=h.every(function(c){return c.s===h[0].s}),n={},g,cs,st=false,hi=rs[0];
+ rs.forEach(function(r){n[r]=(n[r]||0)+1});
+ g=Object.keys(n).map(Number).sort(function(a,b){return n[b]-n[a]||b-a});
+ cs=g.map(function(r){return n[r]}).join('');
+ if(g.length===5){if(rs[0]-rs[4]===4)st=true;else if(rs.join()==='12,3,2,1,0'){st=true;hi=3}}
+ return [st&&fl?8:cs==='41'?7:cs==='32'?6:fl?5:st?4:cs==='311'?3:cs==='221'?2:cs==='2111'?1:0].concat(st?[hi]:g);
+}
+function cmp(a,b){for(var i=0;i<Math.max(a.length,b.length);i++){var d=(a[i]||0)-(b[i]||0);if(d)return d}return 0}
+function best(c){
+ var n=c.length,b=null,i,j,t=function(h){var s=sc5(h);if(!b||cmp(s,b)>0)b=s};
+ if(n===5)t(c);else for(i=0;i<n;i++){if(n===6)t(c.filter(function(_,k){return k!==i}));else for(j=i+1;j<n;j++)t(c.filter(function(_,k){return k!==i&&k!==j}))}
+ return b;
+}
+function pstr(){
+ var h=P.ct,n=[0,3,4,5][P.ph];
+ if(!n){var a=h[0].r,b=h[1].r;return Math.min(1,.2+(a+b)/24*.35+(h[0].s===h[1].s?.06:0)+(a===b?.3:0)+(Math.abs(a-b)<3?.04:0))}
+ var z=best(h.concat(P.bd.slice(0,n))),c=z[0];
+ return c>=3?.85:c===2?.72:c===1?.45+z[1]/12*.2:.15+z[1]/12*.15;
+}
+function prend(){
+ var v=P.over&&P.sd?5:[0,3,4,5][P.ph]||0,i,b='',a=!P.over;
+ $('pkc').innerHTML=(P.say?'<div class="bb">'+P.say+'</div>':'')+catSvg(2,P.mo)+'<b>Рыжик</b> · соперник';
+ $('pkch').innerHTML=P.ct.map(function(c){return P.sd?pc(c):pc(null)}).join('');
+ for(i=0;i<5;i++)b+=i<v?pc(P.bd[i],i>=P.sb?' dl':''):'<div class="cd em"></div>';
+ P.sb=v;$('pkb').innerHTML=b;
+ $('pkmy').innerHTML=P.me.map(function(c){return pc(c)}).join('')+' <b>'+(v?HN[best(P.me.concat(P.bd.slice(0,v)))[0]]:'')+'</b>';
+ $('pkpot').textContent='Банк: '+P.pot+' 🪙 · ставка круга: '+P.st;
+ $('pkchk').hidden=$('pkbet').hidden=!(a&&P.stage==='me');$('pkcall').hidden=!(a&&P.stage==='call');$('pkfold').hidden=!a;
+}
+function pbs(t,m){P.say=t;P.mo=m;prend();setTimeout(function(){if(P&&P.say===t){P.say='';P.mo='idle';prend()}},1800)}
+function pkend(r,m){
+ P.over=true;var w=r==='win'?P.pot:r==='tie'?P.pot/2:0;bal=Math.round(bal+w);show();
+ $('pkmsg').textContent=m;
+ if(r==='win'){talk(pick(L.win));dealer.classList.add('win')}else if(r==='lose')talk(pick(L.lose));
+ pbs(r==='win'?'Мяу... ты выиграл':r==='lose'?'Мурр! Банк мой!':'Ничья, мяу',r==='win'?'sad':r==='lose'?'happy':'idle');
+ $('pkset').hidden=false;
+}
+function showdown(){
+ P.sd=true;var a=best(P.me.concat(P.bd)),b=best(P.ct.concat(P.bd)),c=cmp(a,b),m='Ты: '+HN[a[0]]+' · Кот: '+HN[b[0]]+'. ';
+ pkend(c>0?'win':c<0?'lose':'tie',m+(c>0?'Ты забрал банк '+P.pot+' 🪙':c<0?'Банк у кота':'Ничья, делим банк'));
+}
+function nextR(){
+ if(P.over)return;P.ph++;if(P.ph>3)return showdown();
+ P.stage='me';$('pkmsg').textContent=['','Флоп открыт','Тёрн открыт','Ривер открыт'][P.ph]+'. Чек или ставка?';prend();pbs(pick(['Смотрим, мяу...','Интересно... мурр','Мм, карты!']),'think');
+}
+$('pkgo').onclick=function(){
+ var st=Math.floor(+$('pks').value),want,d,me,ct,bd,k,c;
+ if(!(st>0)){talk('Укажи ставку, мяу!');return}
+ if(bal<st){talk('Не хватает монет, мяу. Попроси добавку!');return}
+ bal-=st;show();dealer.classList.remove('win');
+ want=cfg.pk===null?null:Math.random()*100<cfg.pk;
+ for(k=0;k<300;k++){
+  d=mk52();me=[d.pop(),d.pop()];ct=[d.pop(),d.pop()];bd=[d.pop(),d.pop(),d.pop(),d.pop(),d.pop()];
+  if(want===null)break;c=cmp(best(me.concat(bd)),best(ct.concat(bd)));if(want?c>0:c<0)break;
+ }
+ P={me:me,ct:ct,bd:bd,st:st,pot:st*2,ph:0,stage:'me',over:false,sd:false,sb:0,say:'',mo:'idle'};
+ $('pkset').hidden=true;$('pkgame').hidden=false;$('pkmsg').textContent='Твой ход: чек или ставка?';prend();pbs('Раздаю, мяу! 🃏','act');
+};
+$('pkchk').onclick=function(){
+ if(!P||P.over||P.stage!=='me')return;
+ if(pstr()>.55||Math.random()<.12){P.pot+=P.st;P.stage='call';$('pkmsg').textContent='Кот поставил '+P.st+'. Уравняй или сбрось.';prend();pbs('Ставлю, мяу! +'+P.st,'act')}
+ else{P.stage='wait';$('pkmsg').textContent='Оба чекнули';prend();pbs('Мр, чек.','idle');setTimeout(nextR,1000)}
+};
+$('pkbet').onclick=function(){
+ if(!P||P.over||P.stage!=='me')return;
+ if(bal<P.st){talk('Не хватает монет, мяу!');return}
+ bal-=P.st;P.pot+=P.st;show();
+ if(pstr()>.35||Math.random()<.2){P.pot+=P.st;P.stage='wait';$('pkmsg').textContent='Кот уравнял';prend();pbs('Колл, мур.','act');setTimeout(nextR,1000)}
+ else pkend('win','Кот сбросил карты! Банк твой: '+P.pot+' 🪙');
+};
+$('pkcall').onclick=function(){
+ if(!P||P.over||P.stage!=='call')return;
+ if(bal<P.st){talk('Не хватает монет, мяу!');return}
+ bal-=P.st;P.pot+=P.st;show();P.stage='wait';$('pkmsg').textContent='Ты уравнял';prend();setTimeout(nextR,1000);
+};
+$('pkfold').onclick=function(){if(P&&!P.over)pkend('lose','Ты сбросил карты. Банк у кота')};
+var PAW='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><text x="14" y="52" font-size="30" opacity=".28">🐾</text></svg>');
+var SKD=[
+{id:'def',n:'Сакура',e:'🌸',p:0},
+{id:'night',n:'Ночной город',e:'🌙',p:300,v:{bg:'#0d1226',card:'#1a2142',text:'#e8ecff',muted:'#8f9bd1',accent:'#5b8cff',gold:'#ffd166',reel:'#10162e',line:'#2e3a73'},bg:'linear-gradient(180deg,#0d1226,#1b1040) fixed'},
+{id:'matcha',n:'Матча',e:'🍵',p:300,v:{bg:'#eef7e8',card:'#ffffff',text:'#1f3b24',muted:'#5f8a64',accent:'#3fa34d',gold:'#c9a227',reel:'#f6fbf2',line:'#cfe6c7'},bg:'linear-gradient(160deg,#eaf6e0,#cfe8c8) fixed'},
+{id:'ocean',n:'Океан',e:'🌊',p:500,v:{bg:'#e6f4ff',card:'#ffffff',text:'#0b2f4a',muted:'#4d7fa3',accent:'#1f8fe0',gold:'#e0a21a',reel:'#f2f9ff',line:'#bfdcf2'},bg:'linear-gradient(180deg,#d9f0ff,#9fd0f5) fixed'},
+{id:'sunset',n:'Закат',e:'🍑',p:500,v:{bg:'#ffe9dc',card:'#fff8f3',text:'#4a1f2e',muted:'#9a5b6a',accent:'#ff6b4a',gold:'#d98a00',reel:'#fff1ea',line:'#f6c7bf'},bg:'linear-gradient(180deg,#ffd29d,#ff8fa3 55%,#b46bd6) fixed'},
+{id:'paws',n:'Лапки',e:'🐾',p:800,v:{bg:'#ffe3ef',card:'#ffffff',text:'#3b1030',muted:'#8a5a7c',accent:'#e83e8c',gold:'#d99a00',reel:'#fff7fb',line:'#f3c4dc'},bg:'url("'+PAW+'"),#ffe3ef',s:'80px 80px,auto'},
+{id:'space',n:'Космос',e:'🌌',p:1000,v:{bg:'#07031a',card:'#1d1033',text:'#f3e9ff',muted:'#b79be0',accent:'#c06bff',gold:'#ffd54a',reel:'#12082a',line:'#4a2a7a'},bg:'radial-gradient(2px 2px at 20px 30px,#fff,transparent),radial-gradient(1.5px 1.5px at 90px 80px,#cde,transparent),radial-gradient(2px 2px at 150px 20px,#fff,transparent),linear-gradient(180deg,#07031a,#1d0b3f) fixed',s:'200px 140px,200px 140px,200px 140px,auto'},
+{id:'gold',n:'Золото',e:'👑',p:2500,v:{bg:'#14110a',card:'#241d0e',text:'#fff1c9',muted:'#c9ae66',accent:'#e0a800',gold:'#ffd54a',reel:'#1a1508',line:'#6b5314'},bg:'linear-gradient(135deg,#0c0a05,#2b2210 50%,#0c0a05) fixed'}
+],own=['def'],cur='def';
+try{var sv=JSON.parse(localStorage.getItem('nekoSkins')||'null');if(sv&&sv.o){own=sv.o;cur=sv.c||'def'}}catch(e){}
+function skD(id){return SKD.filter(function(x){return x.id===id})[0]}
+function saveSk(){try{localStorage.setItem('nekoSkins',JSON.stringify({o:own,c:cur}))}catch(e){}}
+function applySkin(id){
+ var k=skD(id)||SKD[0],r=document.documentElement.style;
+ ['bg','card','text','muted','accent','gold','reel','line'].forEach(function(x){if(k.v)r.setProperty('--'+x,k.v[x]);else r.removeProperty('--'+x)});
+ document.body.style.background=k.bg||'';document.body.style.backgroundSize=k.s||'';cur=k.id;
+}
+function renderShop(){
+ var box=$('skins');box.innerHTML='';
+ SKD.forEach(function(k){
+  var o=own.indexOf(k.id)>-1,d=document.createElement('div'),pv=document.createElement('div'),ch=document.createElement('span'),t=document.createElement('div'),b=document.createElement('button');
+  d.className='sk'+(cur===k.id?' on':'');pv.className='pv';
+  pv.style.background=(k.bg||'linear-gradient(160deg,#fff0f6,#ffd6e8)').replace(' fixed','');pv.style.backgroundSize=k.s||'';
+  ch.textContent=k.e+' Aa';ch.style.cssText='padding:3px 9px;border-radius:8px;font-weight:800;background:'+(k.v?k.v.card:'#fff')+';color:'+(k.v?k.v.text:'#3b1030');
+  t.textContent=k.n;t.style.fontWeight='800';
+  b.textContent=cur===k.id?'✔ Надето':o?'Применить':'Купить '+k.p+' 🪙';if(o)b.className='own';
+  b.onclick=function(){
+   if(own.indexOf(k.id)<0){if(bal<k.p){talk('Не хватает монет на скин, мяу 🙀');return}bal-=k.p;own.push(k.id);show();talk('Новый скин «'+k.n+'»! Мурр, красиво 😻')}
+   applySkin(k.id);saveSk();renderShop();
+  };
+  pv.appendChild(ch);d.appendChild(pv);d.appendChild(t);d.appendChild(b);box.appendChild(d);
+ });
+}
+$('aunl').onclick=function(){own=SKD.map(function(k){return k.id});saveSk();renderShop();talk('Все скины открыты 🛍️')};
+$('alk').onclick=function(){own=['def'];applySkin('def');saveSk();renderShop();talk('Покупки сброшены')};
+if(own.indexOf(cur)<0)cur='def';
+applySkin(cur);renderShop();
+function svData(){return {b:Math.round(bal),o:own,c:cur}}
+function svAuto(){try{localStorage.setItem('nekoSave',JSON.stringify(svData()))}catch(e){}}
+function svLoad(d){
+ if(!d||typeof d.b!=='number'||!(d.b>=0)||!Array.isArray(d.o))throw 1;
+ var ids=SKD.map(function(k){return k.id});
+ own=['def'].concat(d.o.filter(function(x){return ids.indexOf(x)>-1&&x!=='def'}));
+ bal=Math.round(d.b);cur=own.indexOf(d.c)>-1?d.c:'def';
+ applySkin(cur);renderShop();show();
+}
+(function(){try{var d=JSON.parse(localStorage.getItem('nekoSave')||'null');if(d)svLoad(d)}catch(e){}})();
+function cp(t){var a=$('asvt');a.value=t;try{navigator.clipboard.writeText(t).catch(function(){})}catch(e){}a.select();try{document.execCommand('copy')}catch(e){}}
+function doLoad(t){
+ try{t=(t||'').trim();if(t.indexOf('NEKO1:')!==0)throw 1;svLoad(JSON.parse(decodeURIComponent(escape(atob(t.slice(6))))));$('asvt').value=t;talk('Сохранение загружено: '+Math.round(bal)+' 🪙')}
+ catch(e){talk('Не получилось прочитать код сохранения 🙀')}
+}
+$('asv').onclick=function(){cp('NEKO1:'+btoa(unescape(encodeURIComponent(JSON.stringify(svData())))));talk('Код сохранения создан и скопирован. Он в поле ниже 💾')};
+$('asvl').onclick=function(){
+ var t=$('asvt').value.trim();
+ if(!t&&navigator.clipboard&&navigator.clipboard.readText){navigator.clipboard.readText().then(doLoad,function(){talk('Вставь код в поле ниже и нажми ещё раз')});return}
+ doLoad(t);
+};
+var dsT=0;
+$('asvd').onclick=function(){
+ var b=$('asvd');
+ if(!dsT){b.textContent='Точно удалить? Нажми ещё раз';dsT=setTimeout(function(){dsT=0;b.textContent='Удалить сохранение'},4000);return}
+ clearTimeout(dsT);dsT=0;b.textContent='Удалить сохранение';
+ try{localStorage.removeItem('nekoSave');localStorage.removeItem('nekoSkins')}catch(e){}
+ own=['def'];bal=1500;applySkin('def');renderShop();show();$('asvt').value='';talk('Сохранение удалено, всё начато заново 🐾');
+};
+show();
+})();
+</script>
+</body>
+</html>
